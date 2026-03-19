@@ -1,57 +1,69 @@
 import { FaUserCheck, FaUserClock, FaHeartbeat } from "react-icons/fa";
 import { MdEmergency, MdOutlineLocalHospital } from "react-icons/md";
 import { Link } from "react-router";
-import logo from "../assets/MBSTU_logo.png"
+// import logo from "../assets/MBSTU_logo.png"
+import doctor_standing from "../assets/doctor_standing.jpg";
 
 const Home = () => {
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50">    
+ {/* Hero Section */}
+      <div className="relative h-80 flex items-center justify-center overflow-hidden mb-6">
+        <img
+          src="https://cdn-ilddgbh.nitrocdn.com/KCiiUwRzwPIrRDjogfTRMgHMpGyyzAgg/assets/images/optimized/rev-f7111be/mbstu.ac.bd/wp-content/uploads/2024/11/Overview-photo-1-1-768x628.jpeg"
+          alt="MBSTU Medical Center"
+          className="w-full h-full object-cover absolute inset-0 brightness-75"
+        />
+        <div className="text-center text-white font-poetsen px-4 py-8 relative z-10 flex items-center justify-center h-full w-full">
+          <div className="text-4xl lg:text-5xl font-bold leading-snug">
+            Welcome to
+            <br className="sm:block md:hidden" />
+            <span className="text-red-700 drop-shadow-lg"> MBSTU </span>
+            <br className="sm:block md:block lg:hidden" />
+            Medical Center
+          </div>
+        </div>
+      </div>
 
-      {/* ✅ HERO SECTION */}
-      {/* ✅ HERO SECTION */}
-<section
-  className="h-[65vh] bg-cover bg-center flex items-center justify-center relative"
-  style={{
-    backgroundImage: "url('https://i.ibb.co/BKVn2BZH/mbstu.png')",
-  }}
->
-  {/* Gradient Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/20"></div>
+       {/* About Us Section */}
+     <section>
+       <div className="bg-teal-50 py-10 px-4 md:px-12 mx-auto">
+        <div className="container mx-auto px-8 md:px-16">
+          <div className="flex flex-col md:flex-row justify-center md:items-stretch gap-8">
+            {/* Doctor Image */}
+            <div className="hidden md:block md:w-[40%] md:mr-8">
+              <img
+                src={doctor_standing}
+                alt="Our Doctors"
+                className="w-full h-full object-contain rounded-xl shadow-lg"
+              />
+            </div>
 
-  <div className="relative text-center text-white px-6">
-    <h1 className="text-4xl md:text-4xl font-bold mb-4 drop-shadow-lg flex items-center justify-center gap-3">
-      <img className="w-20 h-20 drop-shadow-xl" src={logo} alt="" />
-      <span className="bg-gradient-to-r from-green-200 to-green-400 bg-clip-text text-transparent drop-shadow-lg">
-        MBSTU Medical Center
-      </span>
-    </h1>
+            {/* About Text */}
+            <div className="w-full md:w-[60%] md:ml-8 text-left flex flex-col justify-start">
+              <h2 className="text-4xl font-poetsen text-teal-500 mt-1 max-md:text-center mb-4">
+                ABOUT US
+              </h2>
+              <h3 className="text-2xl font-semibold text-gray-800 mb-2 leading-relaxed">
+                We Take Care Of Your Healthy Life
+              </h3>
+              <p className="text-gray-600 leading-7 mb-4">
+               The Medical Center at Mawlana Bhashani Science and Technology University (MBSTU) provides basic healthcare services to the university community — including students, faculty members, and administrative staff. Situated within the campus, the center primarily offers free consultations and limited free medication for students, while faculty and staff members can access medical consultations and purchase prescribed medicines as needed.
+              </p>
 
-    <p className="mb-6 text-lg md:text-xl text-white drop-shadow-md">
-      A secure medical support system for MBSTU students & staff
-    </p>
-
-    <p className="italic mb-8 text-white/90 drop-shadow-md">
-      "Register • Wait for Admin Approval • Get Medical Support"
-    </p>
-
-    <div className="space-x-4">
-      <Link
-        to="/register"
-        className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-full font-semibold shadow-lg"
-      >
-        Register Now
-      </Link>
-
-      <Link
-        to="/login"
-        className="bg-white text-green-600 hover:bg-gray-200 px-6 py-3 rounded-full font-semibold shadow-lg"
-      >
-        Login
-      </Link>
-    </div>
-  </div>
-</section>
-
+              {/* Learn More Button linking to /about */}
+              <Link
+                to="/about"
+                className="bg-teal-500 hover:bg-sky-800 text-white font-bold py-2 px-6 rounded-3xl focus:outline-none focus:shadow-outline w-fit border-none inline-block"
+              >
+                Learn More
+              </Link>
+            </div>
+          </div>
+        </div>
+        </div>
+     </section>
+      
 
       {/* ✅ HOW IT WORKS */}
       <section className="py-16 px-4 max-w-6xl mx-auto">

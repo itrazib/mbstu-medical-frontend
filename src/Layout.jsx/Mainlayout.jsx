@@ -13,4 +13,4 @@ const Mainlayout = () => {
     );
 };
 
-export default Mainlayout;<Navbar></Navbar>
+export default Mainlayout;

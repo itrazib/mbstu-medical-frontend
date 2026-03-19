@@ -74,11 +74,29 @@ const AdminLayout = () => {
            </NavLink>
 
             {/* Add doctor */}
-           <NavLink to="/admin/add-doctor">
+           <NavLink to="/admin/add-user">
              <li>
               <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right">
                 <IoIosPersonAdd />
                 <span className="is-drawer-close:hidden">Add Doctor's</span>
+              </button>
+            </li>
+           </NavLink>
+           {/* Add driver */}
+           <NavLink to="/admin/add-driver">
+             <li>
+              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right">
+                <IoIosPersonAdd />
+                <span className="is-drawer-close:hidden">Add Driver</span>
+              </button>
+            </li>
+           </NavLink>
+           {/* Assign Driver */}
+            <NavLink to="/admin/assign-driver">
+             <li>
+              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right">
+                <IoIosPersonAdd />
+                <span className="is-drawer-close:hidden">Assign Driver</span>
               </button>
             </li>
            </NavLink>
@@ -100,11 +118,40 @@ const AdminLayout = () => {
               </button>
             </li>
             </NavLink>
-            <NavLink to='/admin/vaccine'>
+            {/* duty Roster Doctor */}
+            <NavLink to='/admin/manage-duty-roster-doctor'>
                 <li>
               <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right">
                 <MdManageAccounts />
-                <span className="is-drawer-close:hidden">Vaccine</span>
+                <span className="is-drawer-close:hidden">Manage Duty Roster Doctor</span>
+              </button>
+            </li>
+            </NavLink>
+            {/* staff duty roster */}
+            <NavLink to='/admin/staff-duty-roster'>
+                <li>
+              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right">
+                <MdManageAccounts />
+                <span className="is-drawer-close:hidden">Staff Duty Roster</span>
+              </button>
+            </li>
+            </NavLink>
+            {/* telemedicine duty roster */}
+            <NavLink to='/admin/telemedicine-duty-roster'>
+                <li>
+              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right">
+                <MdManageAccounts />
+                <span className="is-drawer-close:hidden">Telemedicine Duty Roster</span>
+              </button>
+            </li>
+            </NavLink>
+              {/* pathology tests */}
+
+            <NavLink to='/admin/pathology-tests'>
+                <li>
+              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right">
+                <MdManageAccounts />
+                <span className="is-drawer-close:hidden">Pathology Tests </span>
               </button>
             </li>
             </NavLink>

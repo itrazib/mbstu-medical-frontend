@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import DoctorCardSkeleton from "../../components/skeleton/DoctorCardSkeleton";
+import DoctorCard from "../../components/DoctorCard";
 
 const DoctorList = () => {
   const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    setLoading(true);
     fetch("http://localhost:5000/api/doctor/list", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -17,6 +21,7 @@ const DoctorList = () => {
       })
       .then((data) => {
         console.log("Doctor list:", data);
+          setLoading(false);
 
         if (Array.isArray(data)) {
           setDoctors(data);
@@ -31,28 +36,19 @@ const DoctorList = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-3xl font-bold mb-4">Our Doctors</h2>
+      <h2 className="text-3xl font-bold  text-center  my-10">Our Doctors</h2>
 
       {doctors.length === 0 ? (
         <p>No doctors found</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {doctors.map((doc) => (
-            <div key={doc._id} className="p-4 bg-white shadow rounded">
-              <h3 className="text-xl font-bold">{doc.name}</h3>
-              <p><b>Dept:</b> {doc.department}</p>
-              <p><b>Specialization:</b> {doc.specialization}</p>
-              <p><b>Room:</b> {doc.room}</p>
-              <p><b>Available:</b> {doc.availableTime}</p>
-
-              <Link to={`/doctorDetails/${doc._id}`}><a
-                href=""
-                className="mt-3 inline-block bg-blue-600 text-white px-3 py-1 rounded"
-              >
-                View Details
-              </a></Link>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <DoctorCardSkeleton key={i} />
+              ))
+            : doctors.map((doc) => (
+                <DoctorCard key={doc.userId} doctor={doc} />
+              ))}
         </div>
       )}
     </div>

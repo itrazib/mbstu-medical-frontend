@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 
 const ManageDoctors = () => {
@@ -7,26 +8,24 @@ const ManageDoctors = () => {
   const load = () => {
     fetch("http://localhost:5000/api/admin/users/doctors", {
       headers: {
-        "Content-Type": 'application/json',
-         Authorization: `Bearer ${token}` }
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     })
-      .then(res => res.json())
-      .then(data => {
-        console.log("API Response:", data); // Debugging
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("API Response:", data);
 
-        // ALWAYS ensure list is an array
         if (Array.isArray(data)) {
           setList(data);
-        } 
-        else if (Array.isArray(data.doctors)) {
+        } else if (Array.isArray(data.doctors)) {
           setList(data.doctors);
-        } 
-        else {
+        } else {
           console.warn("Invalid response. Setting empty array.");
           setList([]);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Fetch Error:", err);
         setList([]);
       });
@@ -39,16 +38,19 @@ const ManageDoctors = () => {
   const deleteDoctor = async (id) => {
     if (!confirm("Are you sure?")) return;
 
-    const res = await fetch(`http://localhost:5000/api/admin/users/doctor/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await fetch(
+      `http://localhost:5000/api/admin/users/doctor/${id}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
     const data = await res.json();
 
     if (res.ok) {
       alert("Doctor removed");
-      load(); // refresh list
+      load();
     } else {
       alert(data.message || "Something went wrong");
     }
@@ -66,17 +68,15 @@ const ManageDoctors = () => {
             <tr className="bg-gray-200 text-left">
               <th className="p-2">Name</th>
               <th className="p-2">Email</th>
-              <th className="p-2">Department</th>
               <th className="p-2">Action</th>
             </tr>
           </thead>
 
           <tbody>
-            {list.map(doc => (
+            {list.map((doc) => (
               <tr key={doc._id} className="border-b">
                 <td className="p-2">{doc.name}</td>
                 <td className="p-2">{doc.email}</td>
-                <td className="p-2">{doc.department || "-"}</td>
                 <td className="p-2">
                   <button
                     onClick={() => deleteDoctor(doc._id)}
@@ -88,7 +88,6 @@ const ManageDoctors = () => {
               </tr>
             ))}
           </tbody>
-
         </table>
       )}
     </div>
