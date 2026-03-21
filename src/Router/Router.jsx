@@ -36,6 +36,13 @@ import StaffDutyRoster from "../PAges/Admin/StaffDutyRoster";
 import PathologyTest from "../PAges/Admin/PathologyTest";
 import ServicePage from "../PAges/common/servicePage/ServicePage";
 import DutyRosterViewer from "../components/DutyRosterViewer";
+import StaffDashboard from "../PAges/Staff/StaffDashboard";
+import StaffDashboardHome from "../PAges/Staff/StaffDashboardHome";
+import AddMedicine from "../PAges/Staff/Component/AddMedicine";
+import MedicineDetailPage from "../PAges/Staff/Component/MedicineDetailPage";
+import EditMedicinePage from "../PAges/Staff/Component/EditMedicinePage";
+import ManageMedicinePage from "../PAges/Staff/Component/ManageMedicinePage";
+import MedicineOutOfStockPage from "../PAges/Staff/Component/MedicineOutOfStockPage";
 
 
 const router = createBrowserRouter([
@@ -69,11 +76,11 @@ const router = createBrowserRouter([
                 element:<DutyRosterViewer></DutyRosterViewer>
             },
              {
-                path:'doctor',
+                path:'/doctor',
                 element:<DoctorList></DoctorList>
             },
             {
-               path:'staff',
+               path:'/staff',
                element: <Staff></Staff>
             },
             {
@@ -187,6 +194,38 @@ const router = createBrowserRouter([
                 element:<DoctorAppointments></DoctorAppointments>
             },
             
+        ]
+    },
+    {
+        path:'/staff-dashboard',
+        element:<PrivateRoute><StaffDashboard></StaffDashboard></PrivateRoute>,
+        children:[
+            {
+                path:'home',
+                element:<StaffDashboardHome></StaffDashboardHome>
+
+            },
+            {
+                path:'medicines',
+                element:<ManageMedicinePage></ManageMedicinePage>
+
+            },
+            {
+                path:'add-medicine',
+                element:<AddMedicine></AddMedicine>
+            },
+            {
+                path:'medicines/:id',
+                element:<MedicineDetailPage></MedicineDetailPage>
+            },
+            {
+                path:'medicines/:id/edit',
+                element:<EditMedicinePage></EditMedicinePage>
+            },
+            {
+                path:'medicine-out-of-stock',
+                element:<MedicineOutOfStockPage></MedicineOutOfStockPage>
+            }
         ]
     }
 ])
