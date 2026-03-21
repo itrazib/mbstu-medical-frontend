@@ -43,6 +43,8 @@ import MedicineDetailPage from "../PAges/Staff/Component/MedicineDetailPage";
 import EditMedicinePage from "../PAges/Staff/Component/EditMedicinePage";
 import ManageMedicinePage from "../PAges/Staff/Component/ManageMedicinePage";
 import MedicineOutOfStockPage from "../PAges/Staff/Component/MedicineOutOfStockPage";
+import AvailableMedicinePage from "../PAges/Staff/Component/AvailableMedicinePage";
+import DispenseMedicinePage from "../PAges/Staff/Component/DispenseMedicinePage";
 
 
 const router = createBrowserRouter([
@@ -225,6 +227,14 @@ const router = createBrowserRouter([
             {
                 path:'medicine-out-of-stock',
                 element:<MedicineOutOfStockPage></MedicineOutOfStockPage>
+            },
+            {
+                path:'medicines/available',
+                element:<AvailableMedicinePage></AvailableMedicinePage>
+            },
+            {
+                path:'medicines/dispense',
+                element:<DispenseMedicinePage></DispenseMedicinePage>
             }
         ]
     }

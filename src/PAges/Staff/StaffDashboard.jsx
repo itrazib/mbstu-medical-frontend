@@ -35,9 +35,13 @@ const StaffDashboard = () => {
             Medicine Stock
           </NavLink>
 
-          <NavLink to="/staff/dispense" className={linkClass}>
+          <NavLink to="/staff-dashboard/medicines/available" className={linkClass}>
+            Available Medicines
+          </NavLink>
+          <NavLink to="/staff-dashboard/medicines/dispense" className={linkClass}>
             Dispense Medicine
           </NavLink>
+          
 
           <NavLink to="/staff/tests" className={linkClass}>
             Pathology Tests
