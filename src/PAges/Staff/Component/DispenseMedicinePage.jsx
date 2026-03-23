@@ -28,20 +28,18 @@ export default function DispenseMedicinePage() {
 
       const res = await fetch(
         `http://localhost:5000/api/dispense/dispense-records?${params.toString()}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to fetch records");
 
-      // Mongo native driver usually returns array directly
-      setRecords(data);
-      setTotalPages(Math.ceil(res.headers.get("x-total-count") / limit) || 1);
+      setRecords(data.items || []);
+      setTotalPages(data.totalPages || 1);
 
+      // Refresh selected record
       if (selected) {
-        const updated = data.find((r) => r._id === selected._id);
+        const updated = (data.items || []).find((r) => r._id === selected._id);
         setSelected(updated || null);
       }
 
@@ -114,15 +112,15 @@ export default function DispenseMedicinePage() {
               <div
                 key={rec._id}
                 onClick={() => setSelected(rec)}
-                className={`p-4 bg-white rounded-xl shadow-md cursor-pointer border-l-4 ${
+                className={`p-4 bg-white rounded-xl shadow-md cursor-pointer border-l-4 transition ${
                   rec.overallStatus === "completed"
-                    ? "border-green-500"
-                    : "border-red-500"
+                    ? "border-green-500 hover:scale-105"
+                    : "border-red-500 hover:scale-105"
                 }`}
               >
                 <div className="flex justify-between items-start">
                   <span className="text-sm font-mono bg-gray-100 border border-gray-300 px-2 py-1 rounded">
-                    Rx #{rec.prescription.slice(-6)}
+                    Rx #{rec._id.slice(-6)}
                   </span>
                   <div className="text-sm text-gray-600 text-right">
                     <p>{new Date(rec.createdAt).toLocaleTimeString()}</p>
@@ -132,11 +130,11 @@ export default function DispenseMedicinePage() {
                 <p className="mt-2 text-sm">
                   Patient:{" "}
                   <span className="font-semibold text-blue-600">
-                    {rec.patient?.name}
+                    {rec.patient?.name || "Unknown"}
                   </span>
                 </p>
                 <p className="text-sm text-gray-600">
-                  Doctor: {rec.doctor?.name || "—"}
+                  Doctor: {rec.doctor?.name || "Unknown"}
                 </p>
               </div>
             ))

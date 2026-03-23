@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+        import React, { useState } from "react";
 
 const DispenseDetail = ({ record, onUpdate }) => {
   const [loading, setLoading] = useState(false);
@@ -60,17 +60,35 @@ const DispenseDetail = ({ record, onUpdate }) => {
         </span>
       </div>
 
-      <ul className="flex-1 divide-y divide-gray-100">
-        {record.medicines.map((item) => (
-          <li key={item._id} className="py-3 flex justify-between items-center">
+      <div className="mb-4 text-sm">
+        <p>
+          <strong>Patient:</strong> {record.patient?.name || "Unknown"}
+        </p>
+        <p>
+          <strong>Doctor:</strong> {record.doctor?.name || "Unknown"}
+        </p>
+        <p>
+          <strong>Date:</strong>{" "}
+          {new Date(record.createdAt).toLocaleDateString()}
+        </p>
+      </div>
+
+      <ul className="flex-1 divide-y divide-gray-100 mb-4">
+        {record.medicines?.map((item) => (
+          <li
+            key={item._id || item.medicine?._id}
+            className="py-3 flex justify-between items-center"
+          >
             <div>
-              <div className="font-medium text-lg">{item.medicine.name}</div>
+              <div className="font-medium text-lg">
+                {item.medicine?.name || "Unknown"}
+              </div>
               <div className="text-sm text-gray-500">
-                {item.medicine.dosage || "No dose info"}
+                {item.medicine?.dosage || "No dose info"}
               </div>
             </div>
             <span className="text-xl font-bold text-indigo-700">
-              × {item.quantity}
+              × {item.quantity || 0}
             </span>
           </li>
         ))}

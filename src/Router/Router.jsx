@@ -45,6 +45,8 @@ import ManageMedicinePage from "../PAges/Staff/Component/ManageMedicinePage";
 import MedicineOutOfStockPage from "../PAges/Staff/Component/MedicineOutOfStockPage";
 import AvailableMedicinePage from "../PAges/Staff/Component/AvailableMedicinePage";
 import DispenseMedicinePage from "../PAges/Staff/Component/DispenseMedicinePage";
+import MonthlyDispenseReport from "../PAges/Staff/Component/MonthlyDispenseReport";
+import PatientProfilePage from "../PAges/Doctor/PatientProfilePage";
 
 
 const router = createBrowserRouter([
@@ -192,6 +194,10 @@ const router = createBrowserRouter([
                 element:<DoctorProfile></DoctorProfile>
             },
             {
+                path:'patient-profile',
+                element:<PatientProfilePage></PatientProfilePage>
+            },
+            {
                 path:'appointments',
                 element:<DoctorAppointments></DoctorAppointments>
             },
@@ -235,6 +241,10 @@ const router = createBrowserRouter([
             {
                 path:'medicines/dispense',
                 element:<DispenseMedicinePage></DispenseMedicinePage>
+            },
+            {
+                path:'monthly-dispense-report',
+                element:<MonthlyDispenseReport></MonthlyDispenseReport>
             }
         ]
     }

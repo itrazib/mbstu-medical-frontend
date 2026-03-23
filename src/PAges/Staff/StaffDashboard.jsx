@@ -43,8 +43,8 @@ const StaffDashboard = () => {
           </NavLink>
           
 
-          <NavLink to="/staff/tests" className={linkClass}>
-            Pathology Tests
+          <NavLink to="/staff-dashboard/monthly-dispense-report" className={linkClass}>
+            Dispense Report
           </NavLink>
 
           <NavLink to="/staff/ambulance" className={linkClass}>
