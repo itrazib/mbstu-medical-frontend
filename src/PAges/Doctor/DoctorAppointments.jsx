@@ -8,8 +8,10 @@ const DoctorAppointments = () => {
   const [diagnosis, setDiagnosis] = useState("");
   const [note, setNote] = useState("");
   const [medicines, setMedicines] = useState([]);
-
   const [availableMeds, setAvailableMeds] = useState([]);
+  const [availableTests, setAvailableTests] = useState([]);
+  const [selectedTests, setSelectedTests] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
@@ -33,7 +35,18 @@ const DoctorAppointments = () => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) =>  setAvailableMeds(data.medicines || []))
+      .then((data) => setAvailableMeds(data.medicines || []))
+      .catch(console.error);
+  }, [token]);
+
+  // ================= FETCH AVAILABLE TESTS =================
+  useEffect(() => {
+    if (!token) return;
+    fetch("http://localhost:5000/api/diagnosis/pathology-tests", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setAvailableTests(data.tests || []))
       .catch(console.error);
   }, [token]);
 
@@ -63,28 +76,35 @@ const DoctorAppointments = () => {
   };
 
   // ================= MEDICINE MANAGEMENT =================
-  const addMedicine = () => {
+  const addMedicine = () =>
     setMedicines((prev) => [...prev, { medicineId: "", quantity: 1 }]);
-  };
-
   const updateMedicine = (index, field, value) => {
     const newMeds = [...medicines];
-    newMeds[index][field] =
-      field === "quantity" ? parseInt(value) : value;
+    newMeds[index][field] = field === "quantity" ? parseInt(value) : value;
     setMedicines(newMeds);
   };
-
-  const removeMedicine = (index) => {
+  const removeMedicine = (index) =>
     setMedicines(medicines.filter((_, i) => i !== index));
+
+  // ================= HANDLE TEST SELECTION =================
+  const toggleTest = (test) => {
+    if (selectedTests.find((t) => t._id === test._id)) {
+      setSelectedTests(selectedTests.filter((t) => t._id !== test._id));
+    } else {
+      setSelectedTests([...selectedTests, test]);
+    }
   };
 
   // ================= SUBMIT PRESCRIPTION =================
   const handleSubmitPrescription = async () => {
     if (!diagnosis.trim()) return alert("Diagnosis is required");
-    if (medicines.length === 0)
-      return alert("Add at least 1 medicine");
-    if (medicines.some((m) => !m.medicineId || !m.quantity))
-      return alert("All medicines must have selection and quantity");
+
+    // Medicine validation only if no tests
+    if (selectedTests.length === 0) {
+      if (medicines.length === 0) return alert("Add at least 1 medicine");
+      if (medicines.some((m) => !m.medicineId || !m.quantity))
+        return alert("All medicines must have selection and quantity");
+    }
 
     try {
       const res = await fetch("http://localhost:5000/api/medical/create", {
@@ -96,23 +116,24 @@ const DoctorAppointments = () => {
         body: JSON.stringify({
           studentId: selectedData.studentId,
           diagnosis: diagnosis.trim(),
-          medicines,
+          medicines: selectedTests.length > 0 ? [] : medicines,
           problem: selectedData.problem || "",
           note: note.trim() || "",
+          testInfo: selectedTests,
         }),
       });
 
       const data = await res.json();
-      console.log(data);
       if (!res.ok) throw new Error(data.message);
 
       alert("Prescription saved ✅");
 
-      // reset form
+      // Reset
       setSelectedData(null);
       setDiagnosis("");
       setNote("");
       setMedicines([]);
+      setSelectedTests([]);
     } catch (err) {
       console.error(err);
       alert(err.message || "Failed to save prescription");
@@ -123,7 +144,9 @@ const DoctorAppointments = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-center">Doctor Appointments</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center">
+        Doctor Appointments
+      </h2>
 
       <table className="w-full bg-white shadow rounded-xl overflow-hidden">
         <thead className="bg-blue-800 text-white">
@@ -139,10 +162,7 @@ const DoctorAppointments = () => {
         <tbody>
           {appointments.length ? (
             appointments.map((a) => (
-              <tr
-                key={a._id}
-                className="border-b hover:bg-gray-50 text-center"
-              >
+              <tr key={a._id} className="border-b hover:bg-gray-50 text-center">
                 <td className="p-3 text-left">{a.patientName || "Unknown"}</td>
                 <td>{a.date}</td>
                 <td>{a.time}</td>
@@ -175,7 +195,6 @@ const DoctorAppointments = () => {
                       </button>
                     </div>
                   )}
-
                   {a.status === "approved" && (
                     <button
                       onClick={() =>
@@ -206,7 +225,7 @@ const DoctorAppointments = () => {
       {/* ================= PRESCRIPTION MODAL ================= */}
       {selectedData && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-md">
+          <div className="bg-white p-6 rounded-xl w-full max-w-md overflow-y-auto max-h-[90vh]">
             <h2 className="text-xl font-bold mb-4">Write Prescription</h2>
             <p className="mb-1">
               <strong>Patient:</strong> {selectedData.patientName}
@@ -229,47 +248,74 @@ const DoctorAppointments = () => {
               onChange={(e) => setNote(e.target.value)}
             />
 
+            {/* ================= TESTS UI ================= */}
+            <h3 className="font-semibold mb-2">Optional Tests</h3>
+            {availableTests.length === 0 ? (
+              <p className="text-gray-500">No tests available</p>
+            ) : (
+              availableTests.map((test) => (
+                <div key={test._id} className="flex items-center gap-2 mb-1">
+                  <input
+                    type="checkbox"
+                    checked={!!selectedTests.find((t) => t._id === test._id)}
+                    onChange={() => toggleTest(test)}
+                  />
+                  <span>{test.name}</span>
+                </div>
+              ))
+            )}
+
             {/* ================= MEDICINES UI ================= */}
-            <h3 className="font-semibold mb-2">Medicines</h3>
-            {medicines.map((m, i) => (
-              <div key={i} className="flex gap-2 mb-2 items-center">
-                <select
-                  className="border p-1 flex-1"
-                  value={m.medicineId}
-                  onChange={(e) =>
-                    updateMedicine(i, "medicineId", e.target.value)
-                  }
-                >
-                  <option value="">Select medicine</option>
-                  {availableMeds.map((med) => (
-                    <option key={med._id} value={med._id}>
-                      {med.name} ({med.type})
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="number"
-                  min="1"
-                  value={m.quantity}
-                  onChange={(e) =>
-                    updateMedicine(i, "quantity", e.target.value)
-                  }
-                  className="border p-1 w-20"
-                />
+            {selectedTests.length === 0 && (
+              <>
+                <h3 className="font-semibold mb-2">Medicines</h3>
+                {medicines.map((m, i) => (
+                  <div key={i} className="flex gap-2 mb-2 items-center">
+                    <select
+                      className="border p-1 flex-1"
+                      value={m.medicineId}
+                      onChange={(e) =>
+                        updateMedicine(i, "medicineId", e.target.value)
+                      }
+                    >
+                      <option value="">Select medicine</option>
+                      {availableMeds.map((med) => (
+                        <option key={med._id} value={med._id}>
+                          {med.name} ({med.type})
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="number"
+                      min="1"
+                      value={m.quantity}
+                      onChange={(e) =>
+                        updateMedicine(i, "quantity", e.target.value)
+                      }
+                      className="border p-1 w-20"
+                    />
+                    <button
+                      onClick={() => removeMedicine(i)}
+                      className="bg-red-600 text-white px-2 rounded"
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
                 <button
-                  onClick={() => removeMedicine(i)}
-                  className="bg-red-600 text-white px-2 rounded"
+                  onClick={addMedicine}
+                  className="bg-blue-600 text-white px-3 py-1 rounded mb-4"
                 >
-                  X
+                  Add Medicine
                 </button>
-              </div>
-            ))}
-            <button
-              onClick={addMedicine}
-              className="bg-blue-600 text-white px-3 py-1 rounded mb-4"
-            >
-              Add Medicine
-            </button>
+              </>
+            )}
+
+            {selectedTests.length > 0 && (
+              <p className="text-yellow-600 mb-4">
+                Tests selected. Medicines will be given after test report.
+              </p>
+            )}
 
             <div className="flex justify-between mt-3">
               <button

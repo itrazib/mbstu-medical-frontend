@@ -9,6 +9,8 @@ const Register = () => {
     uniId: "",
     session: "",
     department: "",
+    hall: "",
+    image: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -20,10 +22,20 @@ const Register = () => {
     setMsg("");
 
     try {
+      const formData = new FormData();
+
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("password", form.password);
+      formData.append("uniId", form.uniId);
+      formData.append("session", form.session);
+      formData.append("department", form.department);
+      formData.append("hall", form.hall);
+      formData.append("image", form.image);
+
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: formData,
       });
 
       const data = await res.json();
@@ -37,18 +49,16 @@ const Register = () => {
       } else {
         setMsg(data.message);
       }
-
     } catch (error) {
       setLoading(false);
-      setMsg("❌ Registration failed! Try again.", error);
+      setMsg("❌ Registration failed! Try again.");
+      console.error(error);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-green-300 px-4">
-
       <div className="w-full max-w-md bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-xl">
-
         <h2 className="text-3xl font-bold text-center text-green-700 mb-2">
           MBSTU Medical Register
         </h2>
@@ -58,7 +68,6 @@ const Register = () => {
         </p>
 
         <form onSubmit={submit} className="space-y-4">
-
           {/* Name */}
           <div>
             <label className="block mb-1 text-sm">Full Name</label>
@@ -106,7 +115,23 @@ const Register = () => {
               placeholder="CSE / EEE / ME / ICT"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               value={form.department}
-              onChange={(e) => setForm({ ...form, department: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, department: e.target.value })
+              }
+              required
+            />
+          </div>
+          {/* Hall */}
+          <div>
+            <label className="block mb-1 text-sm">Hall</label>
+            <input
+              type="text"
+              placeholder="your assign hall name"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              value={form.hall}
+              onChange={(e) =>
+                setForm({ ...form, hall: e.target.value })
+              }
               required
             />
           </div>
@@ -137,6 +162,20 @@ const Register = () => {
             />
           </div>
 
+          {/* Image Upload */}
+          <div>
+            <label className="block mb-1 text-sm">Profile Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              className="w-full px-3 py-2 border rounded-lg"
+              onChange={(e) =>
+                setForm({ ...form, image: e.target.files[0] })
+              }
+              required
+            />
+          </div>
+
           {msg && (
             <p
               className={`text-center text-sm font-semibold ${
@@ -158,11 +197,13 @@ const Register = () => {
 
         <p className="text-sm text-center mt-5">
           Already have an account?{" "}
-          <Link className="text-green-700 font-semibold hover:underline" to="/login">
+          <Link
+            className="text-green-700 font-semibold hover:underline"
+            to="/login"
+          >
             Login
           </Link>
         </p>
-
       </div>
     </div>
   );

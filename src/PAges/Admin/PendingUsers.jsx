@@ -73,7 +73,7 @@ const PendingUsers = () => {
             <div key={user._id} className="bg-white p-5 shadow rounded">
               <h3 className="font-bold text-lg">{user.name}</h3>
               <p>Email: {user.email}</p>
-              <p>University ID: {user.uniId}</p>
+              <p>University ID: {user.universityId}</p>
 
               <div className="flex gap-2 mt-4">
                 <button

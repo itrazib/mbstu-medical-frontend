@@ -46,7 +46,11 @@ import MedicineOutOfStockPage from "../PAges/Staff/Component/MedicineOutOfStockP
 import AvailableMedicinePage from "../PAges/Staff/Component/AvailableMedicinePage";
 import DispenseMedicinePage from "../PAges/Staff/Component/DispenseMedicinePage";
 import MonthlyDispenseReport from "../PAges/Staff/Component/MonthlyDispenseReport";
-import PatientProfilePage from "../PAges/Doctor/PatientProfilePage";
+// import PatientProfilePage from "../PAges/Doctor/PatientProfilePage";
+import DoctorPatients from "../PAges/Doctor/DoctorPatients";
+
+// import { DoctorTodayPatients } from "../PAges/Doctor/DoctorTodayPatients";
+import DoctorReport from "../PAges/Doctor/DoctorReport";
 
 
 const router = createBrowserRouter([
@@ -194,14 +198,26 @@ const router = createBrowserRouter([
                 element:<DoctorProfile></DoctorProfile>
             },
             {
-                path:'patient-profile',
-                element:<PatientProfilePage></PatientProfilePage>
+                path:"patient-report",
+                element:<DoctorReport></DoctorReport>
             },
+            // {
+            //     path:'patient-profile/:uniqueId',
+            //     element:<PatientProfilePage></PatientProfilePage>
+            // },
+            {
+                path:'patient-list',
+                element:<DoctorPatients></DoctorPatients>
+            },
+            // {
+            //     path:'patient-history/:uniqueId',
+            //     element:<PatientHistory></PatientHistory>
+            // },
             {
                 path:'appointments',
                 element:<DoctorAppointments></DoctorAppointments>
             },
-            
+           
         ]
     },
     {

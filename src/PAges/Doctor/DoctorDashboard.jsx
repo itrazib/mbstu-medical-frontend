@@ -21,8 +21,13 @@ const DoctorDashboard = () => {
           <NavLink className="block hover:bg-blue-700 p-2 rounded" to="/doctor/profile">
             Edit Profile
           </NavLink>
-          <NavLink className="block hover:bg-blue-700 p-2 rounded" to="/doctor/patient-profile">
-            Patient Profile
+          
+          <NavLink className="block hover:bg-blue-700 p-2 rounded" to="/doctor/patient-report">
+            Patient Report
+          </NavLink>
+
+          <NavLink className="block hover:bg-blue-700 p-2 rounded" to="/doctor/patient-list">
+            Patient list
           </NavLink>
 
           <NavLink className="block hover:bg-blue-700 p-2 rounded" to="/doctor/appointments">

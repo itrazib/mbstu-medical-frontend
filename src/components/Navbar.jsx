@@ -107,16 +107,6 @@ const Navbar = () => {
 
       {user && (
         <>
-          <li>
-            <NavLink
-              to="/student/my-appoinments"
-              className={({ isActive }) =>
-                isActive ? "font-semibold text-green-600" : ""
-              }
-            >
-              My Appointments
-            </NavLink>
-          </li>
 
           <li>
             <NavLink

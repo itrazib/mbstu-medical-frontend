@@ -1,7 +1,8 @@
-        import React, { useState } from "react";
+import React, { useState } from "react";
 
 const DispenseDetail = ({ record, onUpdate }) => {
   const [loading, setLoading] = useState(false);
+  console.log(record)
 
   async function toggleRequest() {
     setLoading(true);
@@ -20,7 +21,7 @@ const DispenseDetail = ({ record, onUpdate }) => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ overallStatus: nextStatus }),
-        }
+        },
       );
       if (!res.ok) throw new Error("Failed to update status");
 
@@ -31,7 +32,7 @@ const DispenseDetail = ({ record, onUpdate }) => {
           {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
         if (!finalizeRes.ok) throw new Error("Failed to finalize dispense");
       }
@@ -107,8 +108,8 @@ const DispenseDetail = ({ record, onUpdate }) => {
           {loading
             ? "..."
             : record.overallStatus === "pending"
-            ? "Mark Completed"
-            : "Revert Pending"}
+              ? "Mark Completed"
+              : "Revert Pending"}
         </button>
       </div>
     </div>

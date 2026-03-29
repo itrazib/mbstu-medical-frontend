@@ -37,7 +37,7 @@ export default function DispenseMedicinePage() {
       setRecords(data.items || []);
       setTotalPages(data.totalPages || 1);
 
-      // Refresh selected record
+      // refresh selected record if still in current page
       if (selected) {
         const updated = (data.items || []).find((r) => r._id === selected._id);
         setSelected(updated || null);
@@ -52,12 +52,20 @@ export default function DispenseMedicinePage() {
     }
   };
 
+  // Fetch on filter, dateFilter, page change
   useEffect(() => {
     fetchRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, dateFilter, page]);
 
   const selectTab = (tab) => {
     setFilter(tab);
+    setPage(1);
+    setSelected(null);
+  };
+
+  const handleDateChange = (e) => {
+    setDateFilter(e.target.value);
     setPage(1);
     setSelected(null);
   };
@@ -94,11 +102,7 @@ export default function DispenseMedicinePage() {
           <input
             type="date"
             value={dateFilter}
-            onChange={(e) => {
-              setDateFilter(e.target.value);
-              setPage(1);
-              setSelected(null);
-            }}
+            onChange={handleDateChange}
             className="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

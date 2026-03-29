@@ -5,32 +5,44 @@ export default function AvailableMedicinePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
+
   const today = useMemo(() => new Date(), []);
 
-  useEffect(() => {
-    const fetchMedicines = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("Unauthorized. Please login.");
-        setLoading(false);
-        return;
-      }
-      try {
-        const res = await fetch("http://localhost:5000/api/medicine/medicines", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to fetch medicines");
-        setMedicines(data.items || data); // backend object/items adjust
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchMedicines = async (currentPage = 1) => {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Unauthorized. Please login.");
+      setLoading(false);
+      return;
+    }
 
-    fetchMedicines();
-  }, []);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/medicine/medicines?page=${currentPage}&limit=${limit}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch medicines");
+
+      setMedicines(data.items || []);
+      setTotalPages(data.totalPages || 1);
+      setPage(data.currentPage || 1);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMedicines(page);
+  }, [page]);
 
   if (loading) return <p className="text-center text-gray-500 mt-8">Loading...</p>;
   if (error) return <p className="text-center text-red-500 mt-8">{error}</p>;
@@ -91,6 +103,27 @@ export default function AvailableMedicinePage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-center items-center mt-6 space-x-4">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-indigo-600 text-white rounded disabled:bg-gray-300"
+          >
+            Prev
+          </button>
+          <span>
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-4 py-2 bg-indigo-600 text-white rounded disabled:bg-gray-300"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

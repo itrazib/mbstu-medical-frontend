@@ -40,6 +40,7 @@ export default function MonthlyDispenseReport() {
         );
 
         const result = await res.json();
+        console.log("Report Data:", result);
 
         if (!res.ok) throw new Error(result.message);
 

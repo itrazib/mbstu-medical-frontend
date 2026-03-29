@@ -4,15 +4,11 @@ import {
   FaPhoneAlt,
   FaBirthdayCake,
   FaEnvelope,
-  FaUniversity,
-  FaBuilding,
-  FaUserTag,
   FaTint,
   FaIdBadge,
 } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router";
 import { InfoField } from "../../components/InfoField";
-// import { InfoField } from "../../components/InfoField";
 
 export default function PatientProfilePage() {
   const { uniqueId } = useParams();
@@ -25,14 +21,10 @@ export default function PatientProfilePage() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("Unauthorized");
-        setLoading(false);
-        return;
-      }
-
       try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Unauthorized");
+
         const res = await fetch(
           `http://localhost:5000/api/doctor/patient/${uniqueId}`,
           {
@@ -43,30 +35,45 @@ export default function PatientProfilePage() {
         );
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.message);
+
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to load patient");
+        }
 
         setUserInfo(data.user);
-        if (data.user.photoUrl) setProfileImage(data.user.photoUrl);
+
+        if (data.user?.photoUrl) {
+          setProfileImage(data.user.photoUrl);
+        }
       } catch (err) {
+        console.error(err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    if (uniqueId) fetchProfile();
+    if (uniqueId) {
+      fetchProfile();
+    }
   }, [uniqueId]);
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
-  if (error) return <p className="text-center text-red-600">{error}</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
+
+  if (error)
+    return <p className="text-center text-red-600 mt-10">{error}</p>;
+
   if (!userInfo)
     return <p className="text-center mt-10">No patient found</p>;
 
-  const capitalize = (str) =>
-    str?.charAt(0).toUpperCase() + str?.slice(1);
-
-  const dob = new Date(userInfo.dob);
-  const formattedDOB = dob.toLocaleDateString("en-GB");
+  const dob = userInfo?.dob
+    ? new Date(userInfo.dob).toLocaleDateString("en-GB")
+    : "N/A";
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-base-200 py-10 px-4">
@@ -77,6 +84,7 @@ export default function PatientProfilePage() {
           {profileImage ? (
             <img
               src={profileImage}
+              alt="profile"
               className="w-24 h-24 rounded-full object-cover"
             />
           ) : (
@@ -84,16 +92,40 @@ export default function PatientProfilePage() {
           )}
 
           <h2 className="text-2xl font-bold mt-3">{userInfo.name}</h2>
-          <p className="text-gray-500">{userInfo.role}</p>
+          <p className="text-gray-500 capitalize">{userInfo.role}</p>
         </div>
 
         {/* Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InfoField icon={<FaIdBadge />} label="ID" value={userInfo.uniqueId} />
-          <InfoField icon={<FaBirthdayCake />} label="DOB" value={formattedDOB} />
-          <InfoField icon={<FaTint />} label="Blood" value={userInfo.bloodGroup} />
-          <InfoField icon={<FaPhoneAlt />} label="Phone" value={userInfo.phone} />
-          <InfoField icon={<FaEnvelope />} label="Email" value={userInfo.emails} />
+          <InfoField
+            icon={<FaIdBadge />}
+            label="University ID"
+            value={userInfo.universityId}
+          />
+
+          <InfoField
+            icon={<FaBirthdayCake />}
+            label="DOB"
+            value={dob}
+          />
+
+          <InfoField
+            icon={<FaTint />}
+            label="Blood Group"
+            value={userInfo.bloodGroup || "N/A"}
+          />
+
+          <InfoField
+            icon={<FaPhoneAlt />}
+            label="Phone"
+            value={userInfo.phone || "N/A"}
+          />
+
+          <InfoField
+            icon={<FaEnvelope />}
+            label="Email"
+            value={userInfo.email}
+          />
         </div>
 
         {/* Actions */}
@@ -104,6 +136,7 @@ export default function PatientProfilePage() {
           >
             Write Prescription
           </button>
+
           <button
             className="btn btn-outline"
             onClick={() => navigate(`/doctor/patient-history/${uniqueId}`)}
