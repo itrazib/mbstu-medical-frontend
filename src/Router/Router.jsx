@@ -5,13 +5,11 @@ import Login from "../Auth/Login";
 import Register from "../Auth/Register";
 import AdminLayout from "../Layout.jsx/AdminLayout";
 import Dashboard from "../PAges/Admin/Dashboard";
-// import AddDoctor from "../PAges/Admin/AdminAddUser";
 import PendingUsers from "../PAges/Admin/PendingUsers";
 import ManageDoctors from "../PAges/Admin/ManageDoctors";
 import { PrivateRoute } from "../PrivateRoute/PrivateRoute";
 import StudentDashboard from "../PAges/Student/StudentDashboard";
 import StudentLayout from "../Layout.jsx/StudentLayout";
-// import ServicePage from "../components/ServicePage";
 import About from "../components/About";
 import DoctorList from "../PAges/Student/DoctorList";
 import BookAppointment from "../PAges/Student/MyAppoinments";
@@ -21,7 +19,6 @@ import DoctorHome from "../PAges/Doctor/DoctorHome";
 import DoctorProfile from "../PAges/Doctor/DoctorProfile";
 import DoctorAppointments from "../PAges/Doctor/DoctorAppointments";
 import DoctorDetails from "../PAges/Student/DoctorDetails";
-// import Certificate from "../PAges/Student/Certificate";
 import StudentPrescription from "../PAges/Student/StudentPrescription";
 import AdminVaccineUpdate from "../PAges/Admin/AdminVaccineUpdate";
 import AddDriver from "../PAges/Admin/ambulance/AddDriver";
@@ -46,11 +43,9 @@ import MedicineOutOfStockPage from "../PAges/Staff/Component/MedicineOutOfStockP
 import AvailableMedicinePage from "../PAges/Staff/Component/AvailableMedicinePage";
 import DispenseMedicinePage from "../PAges/Staff/Component/DispenseMedicinePage";
 import MonthlyDispenseReport from "../PAges/Staff/Component/MonthlyDispenseReport";
-// import PatientProfilePage from "../PAges/Doctor/PatientProfilePage";
 import DoctorPatients from "../PAges/Doctor/DoctorPatients";
+import AdminVaccinationPanel from "../PAges/Admin/AdminVaccinationPanel";
 
-// import { DoctorTodayPatients } from "../PAges/Doctor/DoctorTodayPatients";
-import DoctorReport from "../PAges/Doctor/DoctorReport";
 
 
 const router = createBrowserRouter([
@@ -156,7 +151,7 @@ const router = createBrowserRouter([
             },
             {
                 path:'vaccine',
-                element:<AdminVaccineUpdate></AdminVaccineUpdate>
+                element:<AdminVaccinationPanel></AdminVaccinationPanel>
             }
         ]
     },
@@ -177,11 +172,6 @@ const router = createBrowserRouter([
             path:'prescription',
             element:<StudentPrescription></StudentPrescription>
            },
-            
-            // {
-            //     path:'certificate',
-            //     element:<Certificate></Certificate>
-            // }
            
         ]
     },
@@ -197,14 +187,8 @@ const router = createBrowserRouter([
                 path:'profile',
                 element:<DoctorProfile></DoctorProfile>
             },
-            {
-                path:"patient-report",
-                element:<DoctorReport></DoctorReport>
-            },
-            // {
-            //     path:'patient-profile/:uniqueId',
-            //     element:<PatientProfilePage></PatientProfilePage>
-            // },
+            
+            
             {
                 path:'patient-list',
                 element:<DoctorPatients></DoctorPatients>

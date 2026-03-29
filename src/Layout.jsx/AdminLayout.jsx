@@ -156,6 +156,15 @@ const AdminLayout = () => {
             </li>
             </NavLink>
             
+            <NavLink to='/admin/vaccine'>
+                <li>
+              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right">
+                <MdManageAccounts />
+                <span className="is-drawer-close:hidden">Vaccination Panel</span>
+              </button>
+            </li>
+            </NavLink>
+            
 
             {/* List item */}
             <li>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaUser, FaCalendarAlt, FaSyringe, FaNotesMedical, FaFileMedical } from "react-icons/fa";
+import AddVaccination from "./AddVaccination";
 
 const StudentDashboard = () => {
   const token = localStorage.getItem("token");
@@ -9,7 +10,6 @@ const StudentDashboard = () => {
 
   const [appointments, setAppointments] = useState([]);
   const [vaccine, setVaccine] = useState(null);
-  const [certificate, setCertificate] = useState(null);
 
   const [medicalRecords, setMedicalRecords] = useState([]);
   const [reports, setReports] = useState([]);
@@ -37,18 +37,22 @@ const StudentDashboard = () => {
   }, [token]);
 
   /* ================= VACCINE ================= */
-  useEffect(() => {
-    fetch("http://localhost:5000/api/vaccine/my", {
+  const fetchVaccine = () => {
+    fetch("http://localhost:5000/api/vaccine/me", {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => {
         if (!data.message) {
           setVaccine(data);
-          setCertificate(data.certificate || null);
+          console.log("Fetched vaccine data:", data);
         }
       })
-      .catch(() => { });
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchVaccine();
   }, [token]);
 
   /* ================= MEDICAL HISTORY ================= */
@@ -73,7 +77,10 @@ const StudentDashboard = () => {
       setReports([]);
     }
   };
-  useEffect(() => { fetchReports(); }, [token]);
+
+  useEffect(() => {
+    fetchReports();
+  }, [token]);
 
   /* ================= FILE SELECT ================= */
   const handleFileSelect = (testId, file) => {
@@ -138,7 +145,12 @@ const StudentDashboard = () => {
           <FaSyringe className="text-3xl text-purple-600" />
           <div>
             <h2 className="font-bold text-lg">Vaccine</h2>
-            {vaccine ? <p>{vaccine.status}</p> : <p className="text-gray-500">No vaccine info</p>}
+
+            {vaccine ? (
+              <p className="text-green-600 font-semibold">{vaccine.status}</p>
+            ) : (
+              <p className="text-gray-500">No vaccine info</p>
+            )}
           </div>
         </div>
 
@@ -151,11 +163,28 @@ const StudentDashboard = () => {
         </div>
       </div>
 
+      {/* ================= ADD VACCINATION ================= */}
+
+      <div className="bg-white p-6 rounded-xl shadow-md mb-8">
+        <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+          <FaSyringe /> Vaccination Registration
+        </h2>
+
+        
+
+        <AddVaccination
+          userId={student._id}
+          vaccine={vaccine}
+          refreshVaccine={fetchVaccine}
+        />
+      </div>
+
       {/* ================= APPOINTMENTS TABLE ================= */}
       <div className="bg-white p-6 rounded-xl shadow-md mb-8">
         <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
           <FaCalendarAlt /> My Appointments
         </h2>
+
         {appointments.length === 0 ? (
           <p className="text-gray-500">No appointments scheduled.</p>
         ) : (
@@ -169,10 +198,13 @@ const StudentDashboard = () => {
                   <th className="px-4 py-2 border">Status</th>
                 </tr>
               </thead>
+
               <tbody>
                 {appointments.map((a) => (
                   <tr key={a._id} className="even:bg-gray-50 hover:bg-gray-100">
-                    <td className="px-4 py-2 border">{new Date(a.date).toLocaleDateString()}</td>
+                    <td className="px-4 py-2 border">
+                      {new Date(a.date).toLocaleDateString()}
+                    </td>
                     <td className="px-4 py-2 border">{a.time}</td>
                     <td className="px-4 py-2 border">{a.doctorName || "Unknown"}</td>
                     <td className="px-4 py-2 border">{a.status || "Pending"}</td>
@@ -187,6 +219,7 @@ const StudentDashboard = () => {
       {/* ================= MEDICAL RECORDS ================= */}
       <div className="bg-white p-6 rounded-xl shadow-md mb-8">
         <h2 className="text-2xl font-semibold mb-4">Medical Records & Prescriptions</h2>
+
         {medicalRecords.length === 0 ? (
           <p className="text-gray-500">No records found</p>
         ) : (
@@ -205,14 +238,17 @@ const StudentDashboard = () => {
                 {record.testInfo && record.testInfo.length > 0 && (
                   <div className="mt-2 p-2 border rounded bg-white">
                     <p className="font-semibold text-purple-600 mb-2">Tests prescribed by doctor:</p>
+
                     {record.testInfo.map(test => (
                       <div key={test._id} className="flex gap-2 items-center mt-1">
                         <span className="flex-1">{test.name}</span>
+
                         <input
                           type="file"
                           onChange={(e) => handleFileSelect(test._id, e.target.files[0])}
                           className="border rounded px-2 py-1"
                         />
+
                         <button
                           onClick={() => handleInlineUpload(test._id, record._id)}
                           className={`px-2 py-1 rounded text-sm ${uploadingTests[test._id]?.uploaded ? "bg-green-600 text-white" : "bg-blue-600 text-white hover:bg-blue-700"}`}
@@ -237,6 +273,7 @@ const StudentDashboard = () => {
         <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
           <FaFileMedical /> My Reports
         </h2>
+
         {reports.length === 0 ? (
           <p className="text-gray-500">No reports uploaded.</p>
         ) : (
@@ -244,8 +281,17 @@ const StudentDashboard = () => {
             {reports.map(r => (
               <div key={r._id} className="border p-4 rounded flex flex-col gap-2 bg-gray-50">
                 <p className="font-semibold">Test: {r.test?.name || "Unknown Test"}</p>
-                <p className="text-gray-500 text-sm">Date: {new Date(r.createdAt).toLocaleDateString()}</p>
-                <a href={`http://localhost:5000/${r.fileUrl}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+
+                <p className="text-gray-500 text-sm">
+                  Date: {new Date(r.createdAt).toLocaleDateString()}
+                </p>
+
+                <a
+                  href={`http://localhost:5000/${r.fileUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline"
+                >
                   View / Download
                 </a>
               </div>
