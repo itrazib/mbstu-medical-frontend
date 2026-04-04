@@ -73,6 +73,7 @@ const StudentDashboard = () => {
       });
       const data = await res.json();
       setReports(data.reports || []);
+      console.log("Fetched reports:", data);
     } catch {
       setReports([]);
     }

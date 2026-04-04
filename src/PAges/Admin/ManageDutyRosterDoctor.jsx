@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import Loader from "./Loader";
 import PageHeader from "./PageHeader";
-// import { Loader } from "lucide-react";
-// import Loader from "../Loader";
-// import PageHeader from "../PageHeader";
 
 const days = ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const shifts = ["Morning", "Evening", "Full Day"];
@@ -37,10 +34,10 @@ const ManageDutyRosterDoctor = () => {
         });
         const data = await res.json();
 
-        setDoctors(data.doctors);
+        setDoctors(data.doctors || []);
 
         const initial = {};
-        data.dutyRosterDoctor.forEach((item) => {
+        (data.dutyRosterDoctor || []).forEach((item) => {
           const key = `${item.day}___${item.shift}`;
           initial[key] = initial[key] || [];
           initial[key].push(item);
@@ -70,14 +67,26 @@ const ManageDutyRosterDoctor = () => {
       setSaving(true);
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/api/diagnosis/pathology-tests-add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ doctor: draggableId, day, shift, ...times }),
-        });
+        const res = await fetch(
+          "http://localhost:5000/api/admin/dashboard/duty-roster-doctor/add",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              doctor: draggableId,
+              day,
+              shift,
+              startTime: times.startTime,
+              endTime: times.endTime,
+            }),
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to assign doctor");
+
         const newAssignment = await res.json();
 
         setAssignments((prev) => {
@@ -97,14 +106,20 @@ const ManageDutyRosterDoctor = () => {
     }
   };
 
+  // Remove assignment
   const handleRemove = async (assignId, cellId) => {
     setSaving(true);
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/admin/dashboard/duty-roster-doctor/delete/${assignId}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/admin/dashboard/duty-roster-doctor/delete/${assignId}`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to remove assignment");
 
       setAssignments((prev) => {
         const updated = { ...prev };

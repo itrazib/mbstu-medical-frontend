@@ -32,7 +32,7 @@ const AdminLayout = () => {
               <path d="M14 10l2 2l-2 2"></path>
             </svg>
           </label>
-          <div className="px-4">MBSTU Medical Dashboard</div>
+          <div className="px-4">MBSTU Medical Admin Dashboard</div>
         </nav>
         {/* Page content here */}
         <Outlet></Outlet>
